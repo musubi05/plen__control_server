@@ -23,7 +23,7 @@ if [ -e "setup.py" ]; then
 	rm -f setup.py
 fi
 py2applet --make-setup $1
-python setup.py py2app --dist-dir ./ --packages gevent --resources ${resources}
+python setup.py py2app --dist-dir ./ --packages gevent --resources ${resources} --excludes gevent._socket3
 
 # app化に成功したかチェック
 withoutExtName=`basename ${1} .py`
@@ -55,7 +55,7 @@ set device_map_name to "device_map.json"
 tell application "Finder" to set this_folder to parent of (path to me) as string
 set app_path to POSIX path of this_folder
 #device_map.jsonをserver本体のリソースフォルダへ保存
-do shell script "cp -f " & app_path & device_map_name & " " & resource_path & device_map_name
+do shell script "cp -f \"" & app_path & device_map_name & "\" \"" & resource_path & device_map_name & "\""
 # choose USB or BLE
 set driverResult to (choose from list {"USB", "BLE"} with prompt "Please choose driver.\r\r ( Please choose \"USB\" if you want to use \"PLENUtillities\". )" default items "USB")
 if driverResult is false then
@@ -76,7 +76,7 @@ end if
 tell application "Terminal"
 	activate
 	# appを実行（backgroundで実行することでapp起動後wrap_appが終了するようになる）
-	do script (server_path & " " & argv)
+	do script ("\"" & server_path & "\" " & argv)
 end tell
 ## ここまでApplescript ##
 __APPLESCRIPT__
